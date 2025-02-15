@@ -1,15 +1,25 @@
 import express, { Application, Request, Response } from "express";
-import cors from 'cors'
+import cors from "cors";
 const app: Application = express();
 
 // parser
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
+
+const userRouter = express.Router();
+
+app.use("/api/v1/users", userRouter);
+
+userRouter.get("/my-profile", (req: Request, res: Response) => {
+  console.log("profile is seen");
+  res.status(200).json({
+    success:true,
+    message:'profile is seen now in website'
+  })
+});
 
 app.get("/", (req: Request, res: Response) => {
-  const a =10;
-  res.send(a)
-  // res.send("Hello World!");
+  res.send("Hello World! what r u doing");
 });
 
 export default app;
