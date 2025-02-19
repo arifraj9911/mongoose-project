@@ -1,30 +1,38 @@
-interface Name {
+import { Model } from "mongoose";
+
+interface TName {
   firstName: string;
   middleName?: string;
   lastName: string;
 }
-interface Guardian {
+interface TGuardian {
   guardianName: string;
   contact: string;
   email?: string;
   address?: string;
 }
 
-interface Student {
+interface TStudent {
   id: string;
-  name: Name;
+  password: string;
+  name: TName;
   email: string;
   avatar?: string;
   age: number;
   gender: "Male" | "Female" | "Other";
-  phone?: string;
+  phone: string;
   address?: string;
   department: string;
   rollNumber: string;
   registrationNumber: string;
   admissionYear: number;
-  guardian?: Guardian;
+  guardian?: TGuardian;
   guardianContact?: string;
+  isDeleted: boolean;
 }
 
-export default Student;
+export interface StudentModel extends Model<TStudent> {
+  isUserExists(id: string): Promise<TStudent | null>;
+}
+
+export default TStudent;
