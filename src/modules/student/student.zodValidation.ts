@@ -11,37 +11,43 @@ const userNameValidationSchema = z.object({
 
 const guardianValidationSchema = z.object({
   guardianName: z.string().min(1, { message: "Guardian Name is required" }),
-  contact: z
-    .string()
-    .regex(/^\d{11}$/, {
-      message: "Guardian phone number must be exactly 11 digits",
-    }),
+  contact: z.string().regex(/^\d{11}$/, {
+    message: "Guardian phone number must be exactly 11 digits",
+  }),
   email: z.string().email({ message: "Invalid email format" }).optional(),
   address: z.string().optional(),
 });
 
 const studentValidationZodSchema = z.object({
   id: z.string().min(1, { message: "ID is required" }),
-  password: z.string().min(6, { message: "at least 6 character" }),
+  user: z.string().min(1, { message: "User ID is required" }),
   name: userNameValidationSchema,
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
   email: z.string().email({ message: "Invalid email format" }),
-  avatar: z.string().url({ message: "Invalid avatar URL" }).optional(),
-  age: z
-    .number()
-    .min(15, { message: "Minimum age should be 15" })
-    .max(40, { message: "Maximum age should be 40" }),
   gender: z.enum(["Male", "Female", "Other"], {
     message: "Gender must be Male, Female, or Other",
   }),
-  phone: z
+  dateOfBirth: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date format",
+  }),
+  contactNo: z
     .string()
-    .regex(/^\d{11}$/, { message: "Phone number must be exactly 11 digits" }),
-  address: z.string().min(1, { message: "Address is required" }),
-  department: z.string().min(1, { message: "Department is required" }),
-  rollNumber: z.string().min(1, { message: "Roll Number is required" }),
-  registrationNumber: z
+    .regex(/^\d{11}$/, { message: "Contact number must be exactly 11 digits" }),
+  emergencyContact: z
     .string()
-    .min(1, { message: "Registration Number is required" }),
+    .regex(/^\d{11}$/, {
+      message: "Emergency contact number must be exactly 11 digits",
+    }),
+  presentAddress: z.string().min(1, { message: "Present address is required" }),
+  permanentAddress: z
+    .string()
+    .min(1, { message: "Permanent address is required" }),
+  profileImage: z
+    .string()
+    .url({ message: "Invalid profile image URL" })
+    .optional(),
   admissionYear: z
     .number()
     .min(2000, { message: "Admission year must be 2000 or later" })
@@ -49,7 +55,13 @@ const studentValidationZodSchema = z.object({
       message: "Admission year cannot be in the future",
     }),
   guardian: guardianValidationSchema,
-  isDeleted: z.boolean(),
+  localGuardian: guardianValidationSchema,
+  guardianContact: z
+    .string()
+    .regex(/^\d{11}$/, {
+      message: "Guardian contact number must be exactly 11 digits",
+    }),
+  isDeleted: z.boolean().default(false),
 });
 
 export default studentValidationZodSchema;

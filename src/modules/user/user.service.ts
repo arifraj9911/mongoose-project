@@ -15,7 +15,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     userData.role = "student";
 
     // set manually generated id
-    userData.id = "18EEE161";
+    userData.id = "18EEE139";
 
     // mongoose built in instance method
     // create user
