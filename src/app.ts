@@ -22,7 +22,7 @@ userRouter.get("/my-profile", (req: Request, res: Response) => {
 });
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World! what r u doing");
+  res.send("Hello World!");
 });
 
 export default app;
