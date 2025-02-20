@@ -1,36 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
-import TStudent from "./student.interface";
 import { Student } from "./student.model";
 
-const createStudentIntoDB = async (student: TStudent) => {
-  try {
-    // const result = await StudentModel.create(student); //mongoose built in method
-
-    // const existingUser = await Student.findOne({email:student.email});
-
-    // if(existingUser){
-    //   throw new Error('Student Already exist in this email')
-    // }
-
-    // by using static method
-    if (await Student.isUserExists(student.id)) {
-      throw new Error("User exists");
-    }
-
-    // mongoose built in instance method
-    const studentData = new Student(student);
-    const result = await studentData.save();
-
-    return result;
-  } catch (error) {
-    console.log(error);
-    throw error;
-    // throw new Error(
-    //   error._message || error.message || "Failed to create student"
-    // );
-  }
-};
 
 const getAllStudentFromDB = async () => {
   try {
@@ -79,7 +50,6 @@ const deleteStudentFromDB = async (id: string) => {
 };
 
 export const StudentService = {
-  createStudentIntoDB,
   getAllStudentFromDB,
   getSingleStudentFromDB,
   deleteStudentFromDB,

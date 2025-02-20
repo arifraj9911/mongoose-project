@@ -3,43 +3,9 @@ import { Request, Response } from "express";
 import { StudentService } from "./student.service";
 // import { studentValidationSchema } from "./student.validation";
 
-import studentValidationZodSchema from "./student.zodValidation";
+// import studentValidationZodSchema from "./student.zodValidation";
 
-const createStudent = async (req: Request, res: Response) => {
-  try {
-    const { student: studentData } = req.body;
 
-    // validate using zod
-    const studentSchemaValidationWithZod =
-      studentValidationZodSchema.parse(studentData);
-
-    // const { error, value } = studentValidationSchema.validate(studentData);
-
-    console.log(studentSchemaValidationWithZod);
-    // if (error) {
-    //   res.status(500).json({
-    //     success: false,
-    //     message: "error creating student",
-    //     error: error.details,
-    //   });
-    // }
-
-    const result = await StudentService.createStudentIntoDB(studentData);
-    res.status(200).json({
-      success: true,
-      message: "successfully created student",
-      data: result,
-    });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "error creating student",
-      error: error,
-    });
-  }
-};
 
 const getAllStudent = async (req: Request, res: Response) => {
   try {
@@ -99,7 +65,6 @@ const deleteSingleStudent = async (req: Request, res: Response) => {
 };
 
 export const StudentController = {
-  createStudent,
   getAllStudent,
   getSingleStudent,
   deleteSingleStudent

@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 interface TName {
   firstName: string;
@@ -11,23 +11,30 @@ interface TGuardian {
   email?: string;
   address?: string;
 }
+interface TLocalGuardian {
+  guardianName: string;
+  contact: string;
+  email?: string;
+  address?: string;
+}
 
 interface TStudent {
-  id: string;
-  password: string;
+  id:string;
+  user:Types.ObjectId;
   name: TName;
+  password:string;
   email: string;
-  avatar?: string;
-  age: number;
   gender: "Male" | "Female" | "Other";
-  phone: string;
-  address?: string;
-  department: string;
-  rollNumber: string;
-  registrationNumber: string;
+  dateOfBirth:Date
+  contactNo: string;
+  emergencyContact: string;
+  presentAddress: string;
+  permanentAddress: string;
+  profileImage : string;
   admissionYear: number;
-  guardian?: TGuardian;
-  guardianContact?: string;
+  guardian: TGuardian;
+  localGuardian: TLocalGuardian;
+  guardianContact: string;
   isDeleted: boolean;
 }
 

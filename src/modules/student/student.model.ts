@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-this-alias */
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import TStudent, { StudentModel } from "./student.interface";
 import validator from "validator";
 import bcrypt from "bcrypt";
@@ -13,102 +14,88 @@ const userNameSchema = new Schema({
     required: [true, "Last Name is required"],
     validate: {
       validator: (value: string) => validator.isAlpha(value),
-      message: "{VALUE} is not appropreate for last name",
+      message: "{VALUE} is not appropriate for last name",
     },
   },
 });
 
-const guardianNameSchema = new Schema({
+const guardianSchema = new Schema({
   guardianName: { type: String, required: [true, "Guardian Name is required"] },
   contact: {
     type: String,
     required: [true, "Guardian Contact is required"],
     validate: {
-      validator: function (v: string) {
-        return /^\d{11}$/.test(v); // Ensures exactly 11 digits
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      validator: (v: string) => /^\d{11}$/.test(v),
       message: (props: any) =>
-        `${props.value} is not a valid guardian phone number! It must be exactly 11 digits.`,
+        `${props.value} is not a valid phone number! It must be exactly 11 digits.`,
     },
   },
   email: { type: String, match: [/^\S+@\S+\.\S+$/, "Invalid email format"] },
   address: { type: String },
 });
 
-const studentSchema = new Schema<TStudent, StudentModel>(
+const studentSchema = new Schema(
   {
-    id: { type: String, required: [true, "ID is required"], unique: true },
-    password: { type: String, required: [true, "password is required"] },
-    name: {
-      type: userNameSchema,
-      required: true,
-    },
+    id: { type: String, required: true, unique: true },
+    user: { type: Types.ObjectId, required: true, ref: "User" },
+    name: { type: userNameSchema, required: true },
+    password: { type: String, required: true },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
-      // match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
       validate: {
         validator: (v: string) => validator.isEmail(v),
-        message: "{VALUE} is not proper email",
+        message: "{VALUE} is not a valid email",
       },
-    },
-    avatar: { type: String },
-    age: {
-      type: Number,
-      required: [true, "Age is required"],
-      min: [15, "Minimum age should be 15"],
-      max: [40, "Maximum age should be 40"],
     },
     gender: {
       type: String,
-      enum: {
-        values: ["Male", "Female", "Other"],
-        message: "{VALUE} is not supported",
-      },
-      required: [true, "Gender is required"],
+      enum: ["Male", "Female", "Other"],
+      required: true,
     },
-    phone: {
+    dateOfBirth: { type: Date, required: true },
+    contactNo: {
       type: String,
-      required: [true, "Phone number is required"],
+      required: true,
       validate: {
-        validator: function (v: string) {
-          return /^\d{11}$/.test(v); // Ensures exactly 11 digits
-        },
-        message: (props) =>
+        validator: (v: string) => /^\d{11}$/.test(v),
+        message: (props: any) =>
           `${props.value} is not a valid phone number! It must be exactly 11 digits.`,
       },
     },
-    address: { type: String, required: [true, "Address is required"] },
-    department: { type: String, required: [true, "Department is required"] },
-    rollNumber: {
+    emergencyContact: {
       type: String,
-      required: [true, "Roll Number is required"],
-      unique: true,
+      required: true,
+      validate: {
+        validator: (v: string) => /^\d{11}$/.test(v),
+        message: (props: any) =>
+          `${props.value} is not a valid phone number! It must be exactly 11 digits.`,
+      },
     },
-    registrationNumber: {
-      type: String,
-      required: [true, "Registration Number is required"],
-      unique: true,
-    },
+    presentAddress: { type: String, required: true },
+    permanentAddress: { type: String, required: true },
+    profileImage: { type: String },
     admissionYear: {
       type: Number,
-      required: [true, "Admission Year is required"],
+      required: true,
       min: [2000, "Admission year must be 2000 or later"],
       max: [new Date().getFullYear(), "Admission year cannot be in the future"],
     },
-    guardian: {
-      type: guardianNameSchema,
+    guardian: { type: guardianSchema, required: true },
+    localGuardian: { type: guardianSchema, required: true },
+    guardianContact: {
+      type: String,
       required: true,
+      validate: {
+        validator: (v: string) => /^\d{11}$/.test(v),
+        message: (props: any) =>
+          `${props.value} is not a valid phone number! It must be exactly 11 digits.`,
+      },
     },
     isDeleted: { type: Boolean, default: false },
   },
-  {
-    toJSON: {
-      virtuals: true,
-    },
-  }
+  { toJSON: { virtuals: true } }
 );
 
 // pre hook middleware
