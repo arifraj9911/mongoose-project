@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
 const globalErrorHandler: ErrorRequestHandler = (
   error: any,
@@ -8,10 +9,9 @@ const globalErrorHandler: ErrorRequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  const statusCode = 500;
   const message = error || "Something went wrong";
 
-  res.status(statusCode).json({
+  res.status(StatusCodes.BAD_REQUEST).json({
     success: false,
     message,
     error,
