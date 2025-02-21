@@ -22,7 +22,6 @@ interface TStudent {
   id:string;
   user:Types.ObjectId;
   name: TName;
-  password:string;
   email: string;
   gender: "Male" | "Female" | "Other";
   dateOfBirth:Date

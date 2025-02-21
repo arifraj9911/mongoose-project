@@ -22,6 +22,9 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     const newUser = new User(userData);
     const result = await newUser.save();
 
+    // console.log('new user',result)
+    // console.log('new user student',Object.keys(result))
+
     //if got result, create student
     if (Object.keys(result).length) {
       // set id,_id as user
@@ -29,6 +32,8 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
       studentData.user = result._id; //reference id
 
       const newStudent = await Student.create(studentData);
+
+    //   console.log('new student',newStudent)
 
       return newStudent;
     }

@@ -1,7 +1,8 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
-import { StudentRoutes } from "./modules/student/student.route";
-import { UserRoutes } from "./modules/user/user.route";
+import globalErrorHandler from "./modules/middleware/globalErrorHandler";
+import notFoundRoute from "./modules/middleware/notFoundRoute";
+import router from "./routes";
 const app: Application = express();
 
 // parser
@@ -12,8 +13,7 @@ const userRouter = express.Router();
 app.use("/api/v1/users", userRouter);
 
 // application route
-app.use("/api/v2/students", StudentRoutes);
-app.use("/api/v2/users", UserRoutes);
+app.use("/api/v2", router);
 
 userRouter.get("/my-profile", (req: Request, res: Response) => {
   console.log("profile is seen");
@@ -26,5 +26,11 @@ userRouter.get("/my-profile", (req: Request, res: Response) => {
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
+
+// global error handler middleware
+app.use(globalErrorHandler);
+
+// not found route
+app.use(notFoundRoute)
 
 export default app;

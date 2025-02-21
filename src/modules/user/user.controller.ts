@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserServices } from "./user.service";
+import sendResponseMessage from "../../utils/sendResponseMessage";
+import { StatusCodes } from "http-status-codes";
 
-const createStudent = async (req: Request, res: Response) => {
+const createStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { password, student: studentData } = req.body;
 
@@ -25,21 +31,23 @@ const createStudent = async (req: Request, res: Response) => {
       password,
       studentData
     );
-    res.status(200).json({
+    // res.status(200).json({
+    //   success: true,
+    //   message: "successfully created student",
+    //   data: result,
+    // });
+    sendResponseMessage(res, {
+      statusCode: StatusCodes.OK,
       success: true,
       message: "successfully created student",
       data: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "error creating student",
-      error: error,
-    });
+    next(error);
   }
 };
 
 export const UserController = {
-    createStudent
-}
+  createStudent,
+};

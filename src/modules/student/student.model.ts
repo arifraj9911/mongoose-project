@@ -3,8 +3,6 @@
 import { Schema, Types, model } from "mongoose";
 import TStudent, { StudentModel } from "./student.interface";
 import validator from "validator";
-import bcrypt from "bcrypt";
-import config from "../../config";
 
 const userNameSchema = new Schema({
   firstName: { type: String, required: [true, "First Name is required"] },
@@ -39,7 +37,6 @@ const studentSchema = new Schema(
     id: { type: String, required: true, unique: true },
     user: { type: Types.ObjectId, required: true, ref: "User" },
     name: { type: userNameSchema, required: true },
-    password: { type: String, required: true },
     email: {
       type: String,
       required: true,
@@ -98,25 +95,6 @@ const studentSchema = new Schema(
   { toJSON: { virtuals: true } }
 );
 
-// pre hook middleware
-studentSchema.pre("save", async function (next) {
-  // console.log(this,'we will save data')
-  const user = this; // this refer  current document
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds)
-  );
-  next();
-});
-
-// post hook middleware
-studentSchema.post("save", function (doc, next) {
-  doc.password = "";
-
-  // console.log(this, "we saved our data");
-
-  next();
-});
 
 // query hook middleware
 studentSchema.pre("find", function (next) {
