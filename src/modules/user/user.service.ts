@@ -25,6 +25,8 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     // console.log('new user',result)
     // console.log('new user student',Object.keys(result))
 
+    // console.log('studentData:', studentData);
+
     //if got result, create student
     if (Object.keys(result).length) {
       // set id,_id as user

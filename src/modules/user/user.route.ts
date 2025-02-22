@@ -1,10 +1,14 @@
-import express from 'express'
-import { UserController } from './user.controller'
+import express from "express";
+import { UserController } from "./user.controller";
+import { studentValidations } from "../student/student.zodValidation";
+import validateRequest from "../middleware/validateRequest";
 
-const router = express.Router()
+const router = express.Router();
 
+router.post(
+  "/create-student",
+  validateRequest(studentValidations.createstudentValidationZodSchema),
+  UserController.createStudent
+);
 
-router.post("/create-student",UserController.createStudent)
-
-
-export const UserRoutes = router
+export const UserRoutes = router;

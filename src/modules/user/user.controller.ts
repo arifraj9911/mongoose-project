@@ -7,7 +7,7 @@ import { StatusCodes } from "http-status-codes";
 import catchAsync from "../middleware/catchAsync";
 
 const createStudent = catchAsync(async (req, res, next) => {
-  const { password, student: studentData } = req.body;
+  const { password, students: studentData } = req.body;
 
   const result = await UserServices.createStudentIntoDB(password, studentData);
 
