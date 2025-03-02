@@ -9,12 +9,12 @@ const globalErrorHandler: ErrorRequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  const message = error || "Something went wrong";
-
-  res.status(StatusCodes.BAD_REQUEST).json({
+  const message = error.message || "Something went wrong";
+  const statusCode = error.statusCode || StatusCodes.BAD_REQUEST;
+  res.status(statusCode).json({
     success: false,
     message,
-    error,
+    error: error.stack || error,
   });
 
   return;

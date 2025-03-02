@@ -51,6 +51,7 @@ const createstudentValidationZodSchema = z.object({
         .max(new Date().getFullYear(), {
           message: "Admission year cannot be in the future",
         }),
+      admissionSemester: z.string(),
       guardian: guardianValidationSchema,
       localGuardian: guardianValidationSchema,
       guardianContact: z.string().regex(/^\d{11}$/, {

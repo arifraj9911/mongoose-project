@@ -90,11 +90,11 @@ const studentSchema = new Schema(
           `${props.value} is not a valid phone number! It must be exactly 11 digits.`,
       },
     },
+    admissionSemester: { type: Types.ObjectId, ref: "AcademicSemester" },
     isDeleted: { type: Boolean, default: false },
   },
   { toJSON: { virtuals: true } }
 );
-
 
 // query hook middleware
 studentSchema.pre("find", function (next) {

@@ -1,10 +1,13 @@
 import config from "../../config";
+
+import { AcademicSemester } from "../academicSemester/academicSemester.model";
 import TStudent from "../student/student.interface";
 import { Student } from "../student/student.model";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
+import { generatedStudentId } from "./user.utils";
 
-const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+const createStudentIntoDB = async (password: string, payload: TStudent) => {
   try {
     const userData: Partial<TUser> = {};
 
@@ -14,8 +17,16 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     // set role
     userData.role = "student";
 
+    const admissionSemester = await AcademicSemester.findById(
+      payload.admissionSemester
+    );
+
+    if (!admissionSemester) {
+      throw new Error("Admission semester not found");
+    }
+
     // set manually generated id
-    userData.id = "18EEE161";
+    userData.id = await generatedStudentId(admissionSemester);
 
     // mongoose built in instance method
     // create user
@@ -30,12 +41,12 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
     //if got result, create student
     if (Object.keys(result).length) {
       // set id,_id as user
-      studentData.id = result.id;
-      studentData.user = result._id; //reference id
+      payload.id = result.id;
+      payload.user = result._id; //reference id
 
-      const newStudent = await Student.create(studentData);
+      const newStudent = await Student.create(payload);
 
-    //   console.log('new student',newStudent)
+      //   console.log('new student',newStudent)
 
       return newStudent;
     }

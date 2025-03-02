@@ -19,21 +19,22 @@ interface TLocalGuardian {
 }
 
 interface TStudent {
-  id:string;
-  user:Types.ObjectId;
+  id: string;
+  user: Types.ObjectId;
   name: TName;
   email: string;
   gender: "Male" | "Female" | "Other";
-  dateOfBirth:Date
+  dateOfBirth: Date;
   contactNo: string;
   emergencyContact: string;
   presentAddress: string;
   permanentAddress: string;
-  profileImage : string;
+  profileImage: string;
   admissionYear: number;
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
   guardianContact: string;
+  admissionSemester: Types.ObjectId;
   isDeleted: boolean;
 }
 
