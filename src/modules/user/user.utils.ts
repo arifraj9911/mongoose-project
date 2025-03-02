@@ -1,7 +1,7 @@
 import { TAcademicSemesterSchema } from "../academicSemester/academicSemester.interface";
 import { User } from "./user.model";
 
-export const lastStudentId = async () => {
+export const findLastStudentId = async () => {
   const lastStudent = await User.findOne(
     { role: "student" },
     {
@@ -14,12 +14,26 @@ export const lastStudentId = async () => {
     })
     .lean();
 
-  // id suppose 2030010001 jodi hoy tahole substring diye 1st 6 digit remove kora hobe
-  return lastStudent?.id ? lastStudent.id.substring(6) : undefined;
+  return lastStudent?.id ? lastStudent.id : undefined;
 };
 
 export const generatedStudentId = async (payload: TAcademicSemesterSchema) => {
-  const currentId = (await lastStudentId()) || (0).toString();
+  let currentId = (0).toString();
+
+  const lastStudentId = await findLastStudentId(); // get full id i.e., 2025010001
+  const lastStudentSemesterCode = lastStudentId?.substring(4, 6); // 01
+  const lastStudentYear = lastStudentId?.substring(0, 4); // 2025
+  const currentCode = payload.code;
+  const currentYear = payload.year;
+
+  if (
+    lastStudentId &&
+    lastStudentSemesterCode === currentCode &&
+    lastStudentYear === currentYear
+  ) {
+    currentId = lastStudentId?.substring(6);
+  }
+
   let increment = (Number(currentId) + 1).toString().padStart(4, "0");
 
   increment = `${payload.year}${payload.code}${increment}`;
