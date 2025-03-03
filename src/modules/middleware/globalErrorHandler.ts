@@ -6,10 +6,10 @@ import config from "../../config";
 import { ZodError, ZodIssue } from "zod";
 import { TErrorSources } from "../../interface/error";
 import { handleZodError } from "../../errors/handleZodError";
-import { handleValidationError } from "../../errors/handleValidationerror";
 import { handleCastError } from "../../errors/handleCastError";
 import { handleBSONError } from "../../errors/handleBSONError";
 import { handleDuplicateError } from "../../errors/handleDuplicateError";
+import { handleValidationError } from "../../errors/handleValidationerror";
 
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   let message = error.message || "Something went wrong";
