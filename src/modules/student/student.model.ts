@@ -91,6 +91,7 @@ const studentSchema = new Schema(
       },
     },
     admissionSemester: { type: Types.ObjectId, ref: "AcademicSemester" },
+    academicDepartment: { type: Types.ObjectId, ref: "AcademicDepartment" },
     isDeleted: { type: Boolean, default: false },
   },
   { toJSON: { virtuals: true } }

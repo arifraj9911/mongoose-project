@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import config from "../../config";
 
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
@@ -28,27 +29,39 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     // set manually generated id
     userData.id = await generatedStudentId(admissionSemester);
 
-    // mongoose built in instance method
-    // create user
-    const newUser = new User(userData);
-    const result = await newUser.save();
+    // create session
+    const session = await mongoose.startSession();
 
-    // console.log('new user',result)
-    // console.log('new user student',Object.keys(result))
+    try {
+      session.startTransaction();
 
-    // console.log('studentData:', studentData);
+      // transaction-1
+      const result = await User.create([userData], { session });
 
-    //if got result, create student
-    if (Object.keys(result).length) {
+      if (!result.length) {
+        throw new Error("Failed to create User");
+      }
       // set id,_id as user
-      payload.id = result.id;
-      payload.user = result._id; //reference id
+      payload.id = result[0].id;
+      payload.user = result[0]._id; //reference id
 
-      const newStudent = await Student.create(payload);
+      // transaction-2
+      const newStudent = await Student.create([payload], { session });
 
-      //   console.log('new student',newStudent)
+      if (!newStudent.length) {
+        throw new Error("Failed to create Student");
+      }
+
+      await session.commitTransaction();
+      await session.endSession();
 
       return newStudent;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw new Error("Failed to create Student");
     }
   } catch (error) {
     console.log(error);

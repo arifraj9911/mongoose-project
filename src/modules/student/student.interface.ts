@@ -35,6 +35,7 @@ interface TStudent {
   localGuardian: TLocalGuardian;
   guardianContact: string;
   admissionSemester: Types.ObjectId;
+  academicDepartment: Types.ObjectId;
   isDeleted: boolean;
 }
 
