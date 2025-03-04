@@ -12,7 +12,7 @@ import { handleDuplicateError } from "../../errors/handleDuplicateError";
 import { handleValidationError } from "../../errors/handleValidationerror";
 
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  let message = error.message || "Something went wrong";
+  let message =  "Something went wrong";
   let statusCode = error.statusCode || StatusCodes.BAD_REQUEST;
 
   let errorSources: TErrorSources = [
@@ -46,12 +46,20 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     (statusCode = simplifiedError.statusCode),
       (message = simplifiedError.message),
       (errorSources = simplifiedError.errorSources);
-  } else if (error?.errorResponse.code === 11000) {
+  } else if (error?.errorResponse?.code === 11000) {
     const simplifiedError = handleDuplicateError(error);
 
     (statusCode = simplifiedError.statusCode),
       (message = simplifiedError.message),
       (errorSources = simplifiedError.errorSources);
+  } else if (error instanceof Error) {
+    message = error.message;
+    errorSources = [
+      {
+        path: "",
+        message: error?.message,
+      },
+    ];
   }
 
   // if (

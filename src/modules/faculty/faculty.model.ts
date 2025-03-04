@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, Types, model } from "mongoose";
-import TStudent, { StudentModel } from "./student.interface";
 import validator from "validator";
+import TFaculty, { FacultyModel } from "./faculty.interface";
 
-const userNameSchema = new Schema({
+const facultyNameSchema = new Schema({
   firstName: { type: String, required: [true, "First Name is required"] },
   middleName: { type: String },
   lastName: {
@@ -17,7 +16,7 @@ const userNameSchema = new Schema({
   },
 });
 
-const guardianSchema = new Schema({
+const facultyGuardianSchema = new Schema({
   guardianName: { type: String, required: [true, "Guardian Name is required"] },
   contact: {
     type: String,
@@ -32,11 +31,11 @@ const guardianSchema = new Schema({
   address: { type: String },
 });
 
-const studentSchema = new Schema(
+const facultySchema = new Schema(
   {
     id: { type: String, required: true, unique: true },
     user: { type: Types.ObjectId, required: true, ref: "User" },
-    name: { type: userNameSchema, required: true },
+    name: { type: facultyNameSchema, required: true },
     email: {
       type: String,
       required: true,
@@ -73,14 +72,9 @@ const studentSchema = new Schema(
     presentAddress: { type: String, required: true },
     permanentAddress: { type: String, required: true },
     profileImage: { type: String },
-    admissionYear: {
-      type: Number,
-      required: true,
-      min: [2000, "Admission year must be 2000 or later"],
-      max: [new Date().getFullYear(), "Admission year cannot be in the future"],
-    },
-    guardian: { type: guardianSchema, required: true },
-    localGuardian: { type: guardianSchema, required: true },
+
+    guardian: { type: facultyGuardianSchema, required: true },
+    localGuardian: { type: facultyGuardianSchema, required: true },
     guardianContact: {
       type: String,
       required: true,
@@ -90,44 +84,31 @@ const studentSchema = new Schema(
           `${props.value} is not a valid phone number! It must be exactly 11 digits.`,
       },
     },
-    admissionSemester: { type: Types.ObjectId, ref: "AcademicSemester" },
+
     academicDepartment: { type: Types.ObjectId, ref: "AcademicDepartment" },
+    academicFaculty: { type: Types.ObjectId, ref: "AcademicFaculty" },
     isDeleted: { type: Boolean, default: false },
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, timestamps: true }
 );
 
 // query hook middleware
-studentSchema.pre("find", function (next) {
+facultySchema.pre("find", function (next) {
   // console.log(this);
   this.where({ isDeleted: { $ne: true } });
 
   next();
 });
-// studentSchema.pre("findOne", function (next) {
-//   // console.log(this);
-//   this.where({ isDeleted: { $ne: true } });
-//   // console.log("Modified Query:", this.getQuery());
-//   next();
-// });
-
-// using pipeline()
-studentSchema.pre("aggregate", function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  // this.where({ isDeleted: { $ne: true } });
-  // console.log("Modified Query:", this.getQuery());
-  next();
-});
 
 // virtual mongoose
-studentSchema.virtual("fullName").get(function () {
+facultySchema.virtual("fullName").get(function () {
   return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
 });
 
 // creating Custom schema method
-studentSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = Student.findOne({ id });
+facultySchema.statics.isUserExists = async function (id: string) {
+  const existingUser = Faculty.findOne({ id });
   return existingUser;
 };
 
-export const Student = model<TStudent, StudentModel>("Student", studentSchema);
+export const Faculty = model<TFaculty, FacultyModel>("Faculty", facultySchema);

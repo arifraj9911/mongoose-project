@@ -23,14 +23,18 @@ userRouter.get("/my-profile", (req: Request, res: Response) => {
   });
 });
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
+const test = async (req: Request, res: Response) => {
+  // Promise.reject()
+  // const a = 10;
+  res.json({ message: "result send" });
+};
+
+app.get("/", test);
 
 // global error handler middleware
 app.use(globalErrorHandler);
 
 // not found route
-app.use(notFoundRoute)
+app.use(notFoundRoute);
 
 export default app;

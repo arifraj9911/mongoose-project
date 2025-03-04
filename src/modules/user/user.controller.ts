@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
 import { UserServices } from "./user.service";
 import sendResponseMessage from "../../utils/sendResponseMessage";
@@ -18,7 +17,20 @@ const createStudent = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const createFaculty = catchAsync(async (req, res, next) => {
+  const { password, faculty: facultyData } = req.body;
+
+  const result = await UserServices.createFacultyIntoDB(password, facultyData);
+
+  sendResponseMessage(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "successfully created faculty",
+    data: result,
+  });
+});
 
 export const UserController = {
   createStudent,
+  createFaculty,
 };

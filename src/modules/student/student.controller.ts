@@ -7,7 +7,10 @@ import { StatusCodes } from "http-status-codes";
 import catchAsync from "../middleware/catchAsync";
 
 const getAllStudent = catchAsync(async (req, res, next) => {
-  const result = await StudentService.getAllStudentFromDB();
+
+  // console.log(req.query)
+
+  const result = await StudentService.getAllStudentFromDB(req.query);
 
   sendResponseMessage(res, {
     statusCode: StatusCodes.OK,
