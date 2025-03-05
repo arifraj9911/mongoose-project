@@ -132,6 +132,7 @@ const getSingleStudentFromDB = async (id: string) => {
     // throw new Error(error._message || error.message || "Failed to get student");
   }
 };
+
 const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
   try {
     const updatePayload: any = {};

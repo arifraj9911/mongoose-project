@@ -1,34 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 import QueryBuilder from "../../app/builder/QueryBuilder";
-import { facultySearchField } from "./faculty.constant";
-import TFaculty from "./faculty.interface";
-import { Faculty } from "./faculty.model";
+import { Admin } from "./admin.model";
+import { adminSearchField } from "./admin.contant";
+import TAdmin from "./admin.interface";
 import { User } from "../user/user.model";
 
-const getAllFacultyFromDB = async (query: Record<string, unknown>) => {
-  const facultyQuery = new QueryBuilder(
-    Faculty.find().populate("academicDepartment").populate("academicFaculty"),
+const getAllAdminFromDB = async (query: Record<string, unknown>) => {
+  const adminQuery = new QueryBuilder(
+    Admin.find().populate("managementDepartment"),
     query
   )
-    .search(facultySearchField)
+    .search(adminSearchField)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await facultyQuery.modelQuery;
+  const result = await adminQuery.modelQuery;
 
   return result;
 };
 
-const getSingleFacultyFromDB = async (id: string) => {
-  const result = await Faculty.findOne({ id });
+const getSingleAdminFromDB = async (id: string) => {
+  const result = await Admin.findOne({ id });
 
   return result;
 };
 
-const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
+const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
   if (!Object.keys(payload).length) {
     throw new Error("Payload is empty, nothing to update.");
   }
@@ -60,7 +60,7 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
     // Check if 'faculty' exists in payload and process it
     processNestedFields(payload);
 
-    const result = await Faculty.findOneAndUpdate(
+    const result = await Admin.findOneAndUpdate(
       { id },
       { $set: updatePayload },
       { new: true, session }
@@ -77,18 +77,18 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
   }
 };
 
-const deleteFacultyFromDB = async (id: string) => {
+const deleteAdminFromDB = async (id: string) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
     // const result = await StudentModel.findOne({ _id: id });
-    const deleteFaculty = await Faculty.findOneAndUpdate(
+    const deleteAdmin = await Admin.findOneAndUpdate(
       { id },
       { isDeleted: true },
       { new: true, session }
     );
-    if (!deleteFaculty) {
-      throw new Error("Failed to delete Student");
+    if (!deleteAdmin) {
+      throw new Error("Failed to delete Admin");
     }
 
     const deleteUser = await User.findOneAndUpdate(
@@ -103,7 +103,7 @@ const deleteFacultyFromDB = async (id: string) => {
 
     await session.commitTransaction();
 
-    return { message: "Faculty and User Deleted Successfully", deleteFaculty };
+    return { message: "Admin and User Deleted Successfully", deleteAdmin };
   } catch (error: any) {
     console.error("Transaction failed:", error);
     await session.abortTransaction();
@@ -113,9 +113,9 @@ const deleteFacultyFromDB = async (id: string) => {
   }
 };
 
-export const FacultyServices = {
-  getAllFacultyFromDB,
-  getSingleFacultyFromDB,
-  updateFacultyIntoDB,
-  deleteFacultyFromDB,
+export const AdminServices = {
+  getAllAdminFromDB,
+  getSingleAdminFromDB,
+  updateAdminIntoDB,
+  deleteAdminFromDB,
 };

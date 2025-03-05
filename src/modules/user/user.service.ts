@@ -7,9 +7,15 @@ import TStudent from "../student/student.interface";
 import { Student } from "../student/student.model";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
-import { generatedFacultyId, generatedStudentId } from "./user.utils";
+import {
+  generatedAdminId,
+  generatedFacultyId,
+  generatedStudentId,
+} from "./user.utils";
 import TFaculty from "../faculty/faculty.interface";
 import { Faculty } from "../faculty/faculty.model";
+import TAdmin from "../admin/admin.interface";
+import { Admin } from "../admin/admin.model";
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   try {
@@ -120,8 +126,53 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     throw error;
   }
 };
+const createAdminIntoDB = async (password: string, payload: TAdmin) => {
+  const userData: Partial<TUser> = {};
+
+  // if password not given, use default password
+  userData.password = password || (config.default_pass as string);
+
+  // set role
+  userData.role = "admin";
+
+  // set manually generated id
+  userData.id = await generatedAdminId();
+
+  // create session
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // transaction-1
+    const result = await User.create([userData], { session });
+
+    if (!result.length) {
+      throw new Error("Failed to create User");
+    }
+    // set id,_id as user
+    payload.id = result[0].id;
+    payload.user = result[0]._id; //reference id
+
+    // transaction-2
+    const newAdmin = await Admin.create([payload], { session });
+
+    if (!newAdmin.length) {
+      throw new Error("Failed to create Admin");
+    }
+
+    await session.commitTransaction();
+
+    return newAdmin;
+  } catch (error: any) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
 
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
+  createAdminIntoDB,
 };

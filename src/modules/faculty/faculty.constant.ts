@@ -1,0 +1,1 @@
+export const facultySearchField = ["email", "name.lastName", "permanentAddress"];

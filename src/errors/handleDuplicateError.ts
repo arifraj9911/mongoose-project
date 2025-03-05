@@ -9,7 +9,8 @@ export const handleDuplicateError = (err: any): TGenericResponseError => {
 
   //   const duplicateValue = match ? match[1] : null;
 
-  const duplicateValue = err?.errorResponse?.keyValue?.name;
+  const key = Object.keys(err?.errorResponse?.keyValue || {})[0];
+  const duplicateValue = err?.errorResponse?.keyValue?.[key];
 
   const errorSources: TErrorSources = [
     {
