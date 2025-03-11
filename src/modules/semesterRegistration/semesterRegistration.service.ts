@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
 import QueryBuilder from "../../app/builder/QueryBuilder";
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
+import { OfferedCourse } from "../offeredCourse/offeredCourse.model";
 import {
   SemesterRegistrationStatus,
   semesterSearchField,
@@ -121,9 +123,53 @@ const updateSemesterRegistrationFromDB = async (
   return result;
 };
 
+const deleteSemesterRegistrationWithAssociateOfferedCourse = async (
+  id: string
+) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const isSemesterExist = await SemesterRegistration.findById(id);
+
+    if (!isSemesterExist) {
+      throw new Error(" Semester Registration not found!");
+    }
+
+    if (isSemesterExist?.status !== SemesterRegistrationStatus.UPCOMING) {
+      throw new Error(
+        `Yoy can not delete this semester registration as it is ${isSemesterExist?.status}`
+      );
+    }
+
+    await OfferedCourse.deleteMany(
+      {
+        semesterRegistration: id,
+      },
+      { session }
+    );
+
+    const result = await SemesterRegistration.findByIdAndDelete(id, {
+      session,
+    });
+
+    // console.log(offeredCourseWithThisSemesterRagistrationId);
+
+    await session.commitTransaction();
+
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
 export const SemesterRegistrationServices = {
   createSemesterRegistrationIntoDB,
   getAllSemesterRegistrationFromDB,
   getSingleSemesterRegistrationFromDB,
   updateSemesterRegistrationFromDB,
+  deleteSemesterRegistrationWithAssociateOfferedCourse,
 };

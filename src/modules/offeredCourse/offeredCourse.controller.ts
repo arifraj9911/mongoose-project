@@ -39,9 +39,36 @@ const getSingleOfferedCourse = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
+const updateOfferedCourse = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await OfferedCourseServices.updateOfferedCourseIntoDB(
+    id,
+    req.body
+  );
+
+  sendResponseMessage(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "successfully update offered course",
+    data: result,
+  });
+});
+const deleteOfferedCourse = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await OfferedCourseServices.deleteOfferedCourseFromDB(id);
+
+  sendResponseMessage(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "successfully delete offered course",
+    data: result,
+  });
+});
 
 export const OfferedCourseController = {
   createOfferedCourse,
   getAllOfferedCourse,
   getSingleOfferedCourse,
+  updateOfferedCourse,
+  deleteOfferedCourse,
 };

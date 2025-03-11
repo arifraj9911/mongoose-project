@@ -13,13 +13,11 @@ router.post(
 );
 router.get("/", OfferedCourseController.getAllOfferedCourse);
 router.get("/:id", OfferedCourseController.getSingleOfferedCourse);
-// router.patch(
-//   "/update/:id",
-//   validateRequest(
-//     SemesterRegistrationValidation.updateSemesterRegistrationValidationSchema
-//   ),
-//   SemesterRegistrationController.udpateSemesterRegistration
-// );
-// router.delete("/delete/:studentId", StudentController.deleteSingleStudent);
+router.patch(
+  "/update/:id",
+  validateRequest(OfferedCourseValidationSchema.updateOfferedCourseSchema),
+  OfferedCourseController.updateOfferedCourse
+);
+router.delete("/delete/:id", OfferedCourseController.deleteOfferedCourse);
 
 export const OfferedCourseRoutes = router;

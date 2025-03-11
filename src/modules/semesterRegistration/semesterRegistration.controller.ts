@@ -61,9 +61,25 @@ const udpateSemesterRegistration = catchAsync(async (req, res, next) => {
   });
 });
 
+const deleteSemesterRegistration = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const result =
+    await SemesterRegistrationServices.deleteSemesterRegistrationWithAssociateOfferedCourse(
+      id
+    );
+
+  sendResponseMessage(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "successfully delete semester registration",
+    data: result,
+  });
+});
+
 export const SemesterRegistrationController = {
   createSemesterRegistration,
   getAllSemesterRegistration,
   getSingleSemesterRegistration,
   udpateSemesterRegistration,
+  deleteSemesterRegistration,
 };
