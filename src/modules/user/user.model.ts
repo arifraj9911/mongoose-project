@@ -3,12 +3,14 @@ import { model, Schema } from "mongoose";
 import { TUser } from "./user.interface";
 import config from "../../config";
 import bcrypt from "bcrypt";
+import { UserLoginModel } from "../auth/auth.interface";
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, UserLoginModel>(
   {
     id: { type: String, required: true, unique: true },
-    password: { type: String, required: false },
+    password: { type: String, required: false, select: 0 },
     needsPasswordChange: { type: Boolean, default: true },
+    passwordChangedAt: { type: Date },
     role: {
       type: String,
       enum: ["student", "admin", "faculty"],
@@ -43,4 +45,24 @@ userSchema.post("save", function (doc, next) {
   next();
 });
 
-export const User = model<TUser>("User", userSchema);
+// statics for check user exists
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id }).select("+password");
+};
+
+// statics for check user exists
+userSchema.statics.isUserDeleted = async function (id: string) {
+  const userDeletion = await User.findOne({ id }).select("isDeleted");
+
+  return userDeletion?.get("isDeleted");
+};
+
+// statics for check user exists
+userSchema.statics.isPasswordMatched = async function (
+  plainTextPassword: string,
+  hashedPassword: string
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+export const User = model<TUser, UserLoginModel>("User", userSchema);

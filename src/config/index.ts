@@ -9,4 +9,5 @@ export default {
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
   default_pass: process.env.DEFAULT_PASS,
   node_env: process.env.NODE_ENV,
+  jwt_secret: process.env.JSON_WEB_TOKEN_SECRET_KEY,
 };
