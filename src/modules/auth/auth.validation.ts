@@ -14,7 +14,27 @@ const changeUserPasswordValidation = z.object({
   }),
 });
 
+const refreshTokenValidation = z.object({
+  cookies: z.object({
+    refreshToken: z.string({ required_error: "refresh token is required!" }),
+  }),
+});
+const forgotPasswordValidation = z.object({
+  body: z.object({
+    id: z.string({ required_error: "id is required!" }),
+  }),
+});
+const resetPasswordValidation = z.object({
+  body: z.object({
+    id: z.string({ required_error: "id is required!" }),
+    newPassword: z.string({ required_error: "User password is required!" }),
+  }),
+});
+
 export const AuthUserValidation = {
   loginUserValidation,
   changeUserPasswordValidation,
+  refreshTokenValidation,
+  forgotPasswordValidation,
+  resetPasswordValidation,
 };

@@ -4,10 +4,12 @@ import { TUser } from "./user.interface";
 import config from "../../config";
 import bcrypt from "bcrypt";
 import { UserLoginModel } from "../auth/auth.interface";
+import { StatusChange } from "./user.constant";
 
 const userSchema = new Schema<TUser, UserLoginModel>(
   {
     id: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: false, select: 0 },
     needsPasswordChange: { type: Boolean, default: true },
     passwordChangedAt: { type: Date },
@@ -18,7 +20,7 @@ const userSchema = new Schema<TUser, UserLoginModel>(
     },
     status: {
       type: String,
-      enum: ["in-progress", "blocked"],
+      enum: StatusChange,
       default: "in-progress",
     },
     isDeleted: { type: Boolean, default: false },
@@ -63,6 +65,14 @@ userSchema.statics.isPasswordMatched = async function (
   hashedPassword: string
 ) {
   return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+userSchema.statics.isJWTIssuesTimestamps = function (
+  passwordChnagedTimestamps: Date,
+  jwtIssedTimestamp: number
+) {
+  const passwordChangeTime = new Date(passwordChnagedTimestamps).getTime()/1000;
+  return passwordChangeTime > jwtIssedTimestamp;
 };
 
 export const User = model<TUser, UserLoginModel>("User", userSchema);

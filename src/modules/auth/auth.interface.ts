@@ -13,4 +13,8 @@ export interface UserLoginModel extends Model<TUser> {
     plainTextPassword: string,
     hashedPassword: string
   ): Promise<boolean>;
+  isJWTIssuesTimestamps(
+    passwordChnagedTimestamps: Date,
+    jwtIssedTimestamp: number
+  ): boolean;
 }

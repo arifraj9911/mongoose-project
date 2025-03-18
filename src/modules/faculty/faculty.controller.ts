@@ -5,7 +5,6 @@ import catchAsync from "../middleware/catchAsync";
 import { FacultyServices } from "./faculty.service";
 
 const getAllFaculty = catchAsync(async (req, res, next) => {
-  console.log("test faculty", req.user);
   const result = await FacultyServices.getAllFacultyFromDB(req.query);
 
   sendResponseMessage(res, {

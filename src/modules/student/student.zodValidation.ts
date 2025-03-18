@@ -41,10 +41,10 @@ const createstudentValidationZodSchema = z.object({
       permanentAddress: z
         .string()
         .min(1, { message: "Permanent address is required" }),
-      profileImage: z
-        .string()
-        .url({ message: "Invalid profile image URL" })
-        .optional(),
+      // profileImage: z
+      //   .string()
+      //   .url({ message: "Invalid profile image URL" })
+      //   .optional(),
       admissionYear: z
         .number()
         .min(2000, { message: "Admission year must be 2000 or later" })

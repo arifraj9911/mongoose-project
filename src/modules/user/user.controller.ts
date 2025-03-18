@@ -8,7 +8,15 @@ import catchAsync from "../middleware/catchAsync";
 const createStudent = catchAsync(async (req, res, next) => {
   const { password, students: studentData } = req.body;
 
-  const result = await UserServices.createStudentIntoDB(password, studentData);
+  const result = await UserServices.createStudentIntoDB(
+    req.file,
+    password,
+    studentData
+  );
+
+  // console.log(req.file);
+  // console.log(req.body);
+  // console.log(result);
 
   sendResponseMessage(res, {
     statusCode: StatusCodes.OK,
@@ -42,8 +50,40 @@ const createAdmin = catchAsync(async (req, res, next) => {
   });
 });
 
+const getMe = catchAsync(async (req, res, next) => {
+  // const token = req.headers.authorization
+
+  const { userId, userRole } = req.user;
+
+  const result = await UserServices.getMe(userId, userRole);
+
+  sendResponseMessage(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "successfully retrive own user",
+    data: result,
+  });
+});
+
+const statusChange = catchAsync(async (req, res, next) => {
+  // const token = req.headers.authorization
+
+  const { id } = req.params;
+
+  const result = await UserServices.statusChange(id, req.body);
+
+  sendResponseMessage(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "successfully status change user",
+    data: result,
+  });
+});
+
 export const UserController = {
   createStudent,
   createFaculty,
   createAdmin,
+  getMe,
+  statusChange,
 };
