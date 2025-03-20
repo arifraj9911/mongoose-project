@@ -53,6 +53,8 @@ const createStudentIntoDB = async (
       const imageName = `${userData.id}${payload?.name?.firstName}`;
       const filePath = file.path;
 
+      console.log(filePath)
+
       const { secure_url } = await sendImageToCloudinary(imageName, filePath);
 
       // transaction-1

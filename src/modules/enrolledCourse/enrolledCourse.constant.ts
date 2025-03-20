@@ -1,0 +1,1 @@
+export const gradeEnum = ["A+","A","B","C","D","F","NA"]
